@@ -37,8 +37,15 @@ public class Player {
 	public void jsonParser(JSONObject playerJsonObject, String id) {
 		try {
 			this.setId(id);
-			this.setName(playerJsonObject.getString("name"));
-			this.setScore(playerJsonObject.getInt("score"));
+			if (playerJsonObject.has("name")
+					&& !playerJsonObject.isNull("name")) {
+				this.setName(playerJsonObject.getString("name"));
+			}
+
+			if (playerJsonObject.has("score")
+					&& !playerJsonObject.isNull("score")) {
+				this.setScore(playerJsonObject.getInt("score"));
+			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

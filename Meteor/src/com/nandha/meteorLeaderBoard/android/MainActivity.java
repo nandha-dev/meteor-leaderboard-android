@@ -19,7 +19,11 @@ import com.nandha.meteorLeaderBoard.models.Player;
 
 public class MainActivity extends Activity implements MeteorCallback {
 
+	// Constants
 	private final String URL = "ws://10.0.2.2:3000/websocket";
+	private final String COLLECTION_NAME = "players";
+
+	// meteor object
 	private Meteor meteor;
 
 	// player list
@@ -43,7 +47,7 @@ public class MainActivity extends Activity implements MeteorCallback {
 		// player list
 		players = new ArrayList<Player>();
 
-		meteor.subscribe("players");
+		meteor.subscribe(COLLECTION_NAME);
 
 		playersListView.setAdapter(new PlayerListAdapter(players,
 				MainActivity.this));
@@ -59,7 +63,6 @@ public class MainActivity extends Activity implements MeteorCallback {
 	@Override
 	public void onDataAdded(String collectionName, String documentID,
 			String newValuesJson) {
-
 		try {
 			Player player = new Player();
 			player.jsonParser(new JSONObject(newValuesJson), documentID);
@@ -75,10 +78,19 @@ public class MainActivity extends Activity implements MeteorCallback {
 	@Override
 	public void onDataChanged(String collectionName, String documentID,
 			String updatedValuesJson, String removedValuesJson) {
-		Log.d("Collection Name", collectionName);
-		Log.d("documentID", documentID);
-		Log.d("updatedValuesJson", updatedValuesJson.toString());
-		// Log.d("removedValuesJson", removedValuesJson.toString());
+		for (int i = 0; i < players.size(); i++) {
+			if (players.get(i).getId().equals(documentID)) {
+				try {
+					players.get(i).jsonParser(
+							new JSONObject(updatedValuesJson), documentID);
+					playersListView.setAdapter(new PlayerListAdapter(players,
+							MainActivity.this));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	@Override
