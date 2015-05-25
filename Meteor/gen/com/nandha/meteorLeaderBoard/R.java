@@ -11,24 +11,29 @@ public final class R {
     public static final class attr {
     }
     public static final class dimen {
-        /**  Default screen margins, per the Android Design guidelines. 
-
+        /** 
          Example customization of dimensions originally defined in res/values/dimens.xml
          (such as screen margins) for screens with more than 820dp of available width. This
          would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
     
          */
-        public static final int activity_horizontal_margin=0x7f040000;
-        public static final int activity_vertical_margin=0x7f040001;
+        public static final int activity_horizontal_margin=0x7f040001;
+        /**  Default screen margins, per the Android Design guidelines. 
+         */
+        public static final int default_padding=0x7f040000;
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f080000;
+        public static final int action_settings=0x7f080003;
+        public static final int player_item_tv_name=0x7f080001;
+        public static final int player_item_tv_score=0x7f080002;
+        public static final int players_listView=0x7f080000;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
+        public static final int player_list_item=0x7f030001;
     }
     public static final class menu {
         public static final int main=0x7f070000;

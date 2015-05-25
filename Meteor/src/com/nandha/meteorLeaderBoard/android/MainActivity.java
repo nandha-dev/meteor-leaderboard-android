@@ -11,8 +11,10 @@ import im.delight.android.ddp.MeteorCallback;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ListView;
 
 import com.nandha.meteorLeaderBoard.R;
+import com.nandha.meteorLeaderBoard.adapter.PlayerListAdapter;
 import com.nandha.meteorLeaderBoard.models.Player;
 
 public class MainActivity extends Activity implements MeteorCallback {
@@ -21,12 +23,18 @@ public class MainActivity extends Activity implements MeteorCallback {
 	private Meteor meteor;
 
 	// player list
-	List<Player> players;
+	private List<Player> players;
+
+	// players List View
+	private ListView playersListView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		// player list view
+		playersListView = (ListView) findViewById(R.id.players_listView);
 
 		// meteor initialization
 		meteor = new Meteor(URL);
@@ -35,7 +43,10 @@ public class MainActivity extends Activity implements MeteorCallback {
 		// player list
 		players = new ArrayList<Player>();
 
-		String subscriptionId = meteor.subscribe("players");
+		meteor.subscribe("players");
+
+		playersListView.setAdapter(new PlayerListAdapter(players,
+				MainActivity.this));
 
 	}
 
@@ -53,6 +64,8 @@ public class MainActivity extends Activity implements MeteorCallback {
 			Player player = new Player();
 			player.jsonParser(new JSONObject(newValuesJson), documentID);
 			players.add(player);
+			playersListView.setAdapter(new PlayerListAdapter(players,
+					MainActivity.this));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
