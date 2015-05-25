@@ -1,13 +1,14 @@
 package com.nandha.meteorLeaderBoard.android;
 
+import im.delight.android.ddp.Meteor;
+import im.delight.android.ddp.MeteorCallback;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import im.delight.android.ddp.Meteor;
-import im.delight.android.ddp.MeteorCallback;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,7 @@ public class MainActivity extends Activity implements MeteorCallback {
 
 	// player list
 	private List<Player> players;
+	private PlayerListAdapter listViewAdapter;
 
 	// players List View
 	private ListView playersListView;
@@ -49,8 +51,9 @@ public class MainActivity extends Activity implements MeteorCallback {
 
 		meteor.subscribe(COLLECTION_NAME);
 
-		playersListView.setAdapter(new PlayerListAdapter(players,
-				MainActivity.this));
+		listViewAdapter = new PlayerListAdapter(players, MainActivity.this);
+
+		playersListView.setAdapter(listViewAdapter);
 
 	}
 
@@ -63,12 +66,14 @@ public class MainActivity extends Activity implements MeteorCallback {
 	@Override
 	public void onDataAdded(String collectionName, String documentID,
 			String newValuesJson) {
+
 		try {
+			// creating a player object and adding to players list
 			Player player = new Player();
 			player.jsonParser(new JSONObject(newValuesJson), documentID);
 			players.add(player);
-			playersListView.setAdapter(new PlayerListAdapter(players,
-					MainActivity.this));
+			// sorting players
+			sortPlayers();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -78,13 +83,16 @@ public class MainActivity extends Activity implements MeteorCallback {
 	@Override
 	public void onDataChanged(String collectionName, String documentID,
 			String updatedValuesJson, String removedValuesJson) {
+
+		// finding position by documentID
 		for (int i = 0; i < players.size(); i++) {
 			if (players.get(i).getId().equals(documentID)) {
 				try {
+					// players values updates
 					players.get(i).jsonParser(
 							new JSONObject(updatedValuesJson), documentID);
-					playersListView.setAdapter(new PlayerListAdapter(players,
-							MainActivity.this));
+					// sorting player list
+					sortPlayers();
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -105,6 +113,23 @@ public class MainActivity extends Activity implements MeteorCallback {
 	public void onException(Exception exception) {
 		// TODO Auto-generated method stub
 		Log.d("exception", exception.toString());
+	}
+
+	private void sortPlayers() {
+		for (int i = 0; i < players.size(); i++) {
+			for (int j = (i + 1); j < players.size(); j++) {
+				if (players.get(i).getScore() < players.get(j).getScore()) {
+					Player player = players.get(i);
+					players.set(i, players.get(j));
+					players.set(j, player);
+				}
+			}
+		}
+
+		// updating list view
+		listViewAdapter = new PlayerListAdapter(players, MainActivity.this);
+		playersListView.setAdapter(listViewAdapter);
+		listViewAdapter.notifyDataSetChanged();
 	}
 
 }
