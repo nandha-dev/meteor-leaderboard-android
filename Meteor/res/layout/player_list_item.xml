@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:padding="@dimen/default_padding"
     android:weightSum="10" >
 
     <TextView
@@ -10,8 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_weight="7"
-        android:padding="@dimen/default_padding"
+        android:layout_weight="5"
         android:textColor="#000000"
         android:textSize="17sp" />
 
@@ -21,8 +21,23 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="3"
-        android:padding="@dimen/default_padding"
         android:textColor="#000000"
         android:textSize="17sp" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="2" >
+
+        <Button
+            android:id="@+id/player_item_bt_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_background"
+            android:onClick="addFivePoints"
+            android:text="@string/plus_five"
+            android:textColor="@drawable/button_color" />
+    </LinearLayout>
 
 </LinearLayout>

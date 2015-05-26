@@ -4,7 +4,9 @@ import im.delight.android.ddp.Meteor;
 import im.delight.android.ddp.MeteorCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +14,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 
 import com.nandha.meteorLeaderBoard.R;
@@ -21,11 +24,12 @@ import com.nandha.meteorLeaderBoard.models.Player;
 public class MainActivity extends Activity implements MeteorCallback {
 
 	// Constants
-	private final String URL = "ws://10.0.2.2:3000/websocket";
+	private final String URL = "ws://nandha-leaderboard.meteor.com/websocket";
 	private final String COLLECTION_NAME = "players";
+	private final String PUBLICATION_NAME = "players";
 
 	// meteor object
-	private Meteor meteor;
+	private static Meteor meteor;
 
 	// player list
 	private List<Player> players;
@@ -49,7 +53,7 @@ public class MainActivity extends Activity implements MeteorCallback {
 		// player list
 		players = new ArrayList<Player>();
 
-		meteor.subscribe(COLLECTION_NAME);
+		Log.d("subscribe", meteor.subscribe(PUBLICATION_NAME));
 
 		listViewAdapter = new PlayerListAdapter(players, MainActivity.this);
 
@@ -130,6 +134,26 @@ public class MainActivity extends Activity implements MeteorCallback {
 		listViewAdapter = new PlayerListAdapter(players, MainActivity.this);
 		playersListView.setAdapter(listViewAdapter);
 		listViewAdapter.notifyDataSetChanged();
+	}
+
+	// Update five points on button click
+	public void addFivePoints(View view) {
+
+		View parentRow = (View) view.getParent().getParent(); // button inside
+																// linear layout
+		ListView listView = (ListView) parentRow.getParent();
+		final int position = listView.getPositionForView(parentRow);
+		players.get(position).setScore(players.get(position).getScore() + 5);
+
+		Map<String, Object> query = new HashMap<String, Object>();
+		query.put("_id", players.get(position).getId());
+
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("name", players.get(position).getName());
+		values.put("score", players.get(position).getScore());
+
+		meteor.update(COLLECTION_NAME, query, values);
+
 	}
 
 }
